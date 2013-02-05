@@ -40,13 +40,10 @@ class Stick {
 
     public function save() {
         $this->_validateModifiable();
-        //var_dump($this->_isNew); exit;
         if ($this->_isNew) {
-            ///echo 'fine all'; exit;
-            //$this->_getDataSource()->add(static::_getName(), $this->_data);
             $this->_dataSource->add(static::_getName(), $this->_data);
         } else {
-            $this->_getDataSource()->update(static::_getName(), $this->_data);
+            $this->_dataSource->update(static::_getName(), $this->_data);
         }
     }
 
@@ -148,7 +145,6 @@ class Stick {
         }
 
         return static::$_table;
-        //return (isset(static::$_name) ? static::$_name : strtolower(get_called_class()));
     }
 
 
