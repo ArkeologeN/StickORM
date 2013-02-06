@@ -139,7 +139,6 @@ class Database implements Transactional, DataSource, Fetcher, Modifiable {
     {
         // TODO: Implement add() method.
         $primaryKeyColumn = $this->_getPrimaryKeyColumn($object);
-        echo "<pre>"; print_r($object); exit;
         $this->_getDb()->insert($object, $data);
         $data[$primaryKeyColumn] = $this->_getDb()->lastInsertId();
     }

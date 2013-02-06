@@ -8,9 +8,7 @@
 
 class Stick {
 
-    private static $_table = null;
-
-    public $_properties = array();
+    private $_table = "Hamza";
 
     private $_data = array();
 
@@ -40,21 +38,20 @@ class Stick {
     */
 
     public function __construct($table_name,$data = array()) {
-        //$this->_table = $table_name;
-        self::$_table = $table_name;
-        //echo ' = ' . self::_getName() . ' = '. '<br />';
+        $this->_table = $table_name;
         $this->_data = $data;
         $this->_isNew = true;
         $this->_dataSource = static::getDataSource();
-        //echo "<pre>"; print_r($this); exit;
+        //echo "<pre>"; print_r(static::$_table); exit;
     }
 
     public function save() {
         $this->_validateModifiable();
+        //echo $this->_getName(); exit;
         if ($this->_isNew) {
-            $this->_dataSource->add(static::_getName(), $this->_data);
+            $this->_dataSource->add($this->_getName(), $this->_data);
         } else {
-            $this->_dataSource->update(static::_getName(), $this->_data);
+            $this->_dataSource->update($this->_getName(), $this->_data);
         }
     }
 
@@ -76,23 +73,22 @@ class Stick {
 
     private function _makeStick($data) {
         if ( !empty ($data)) {
-            $stick = Stick::newStick(static::_getName());
+            $stick = Stick::newStick($this->_getName());
             foreach ($data as $column => $value) {
                 $stick->$column = $value;
             }
 
-
             return $stick;
         }
-        return Stick::newStick(static::_getName());
+        return Stick::newStick($this->_getName());
     }
 
     public function get($criteria = array(), $order = null, $limit = null, $offset = 0) {
         try {
-            $result = static::getDataSource()->get(static::_getName(), $criteria, $order, $limit, $offset);
+            $result = static::getDataSource()->get($this->_getName(), $criteria, $order, $limit, $offset);
             $object = new stdClass();
             if ( !empty($result)) {
-                $object = Stick::newStick(static::_getName());
+                $object = Stick::newStick($this->_getName());
                 $object->_setNew(false);
                 foreach ($result as $column => $value) {
                     $object->$column = $value;
@@ -120,11 +116,11 @@ class Stick {
 
     public function get_all($object, array $criteria = array(), $order = null, $limit = null, $offset = 0) {
         try {
-            $result = static::getDataSource()->get_all(static::_getName(), $criteria, $order, $limit, $offset);
+            $result = static::getDataSource()->get_all($this->_getName(), $criteria, $order, $limit, $offset);
             $objects = array();
             if ( !empty($result) && count($result) > 0) {
                 foreach ($result as $data) {
-                    $object = Stick::newStick(static::_getName());
+                    $object = Stick::newStick($this->_getName());
                     $object->_setNew(false);
                     foreach ($data as $column => $value) {
                         $object->$column = $value;
@@ -141,7 +137,7 @@ class Stick {
     }
 
     public function count($criteria = array()) {
-        return static::getDataSource()->count(static::_getName(),$criteria);
+        return static::getDataSource()->count($this->_getName(),$criteria);
     }
 
     public function __set($column, $value) {
@@ -165,7 +161,7 @@ class Stick {
     public static function setDataSource(DataSource $datasource) {
         static::$_classDataSource = $datasource;
     }
-
+    /*
     protected static function _getName() {
         if ( !isset (self::$_table)) {
             throw new Exception("Table name not found in ".get_called_class());
@@ -173,6 +169,16 @@ class Stick {
 
         return static::$_table;
     }
+    */
+
+    public function _getName() {
+        if ( !isset ($this->_table)) {
+            throw new Exception("Table name not found in ".get_called_class());
+        }
+
+        return $this->_table;
+    }
+
 
 
 }
