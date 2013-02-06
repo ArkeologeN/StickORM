@@ -17,10 +17,11 @@ class Autoloader {
     static function _autoload($class) {
         if (strpos($class,'_') === FALSE) {
             $class_path = dirname(__FILE__).DS.$class.'.php';
-            if (!file_exists($class_path))
-                throw new \Exception("Unable to find Entity class at ".basename($class_path));
+            if (file_exists($class_path))
+                require_once $class_path;
+                //throw new \Exception("Unable to find Entity class at ".basename($class_path));
 
-            require_once $class_path;
+
         }
 
     }

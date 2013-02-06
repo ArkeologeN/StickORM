@@ -53,7 +53,6 @@ class Stick {
 
     public function save() {
         $this->_validateModifiable();
-        //echo $this->_getName(); exit;
         if ($this->_isNew) {
             $this->_dataSource->add($this->_getName(), $this->_data);
         } else {
@@ -70,7 +69,7 @@ class Stick {
     }
 
     public function delete() {
-
+        $this->_dataSource->remove($this->_getName(), $this->_data);
     }
 
     public function _setNew($bool) {
