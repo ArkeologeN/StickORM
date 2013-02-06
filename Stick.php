@@ -22,6 +22,10 @@ class Stick {
 
     protected static $_name;
 
+    private $_config = null;
+
+    private static $static_config = null;
+
     /*
     static function newStick($table_name = null, $id = null) {
 
@@ -41,7 +45,9 @@ class Stick {
         $this->_table = $table_name;
         $this->_data = $data;
         $this->_isNew = true;
-        $this->_dataSource = static::getDataSource();
+        $this->_config = StickConfig::getInstance();
+        static::$static_config = $this->_config;
+        $this->_dataSource = $this->_config->datasource;
         //echo "<pre>"; print_r(static::$_table); exit;
     }
 
@@ -155,21 +161,12 @@ class Stick {
     }
 
     public static function getDataSource() {
-        return static::$_classDataSource;
+        return static::$static_config;
     }
 
     public static function setDataSource(DataSource $datasource) {
         static::$_classDataSource = $datasource;
     }
-    /*
-    protected static function _getName() {
-        if ( !isset (self::$_table)) {
-            throw new Exception("Table name not found in ".get_called_class());
-        }
-
-        return static::$_table;
-    }
-    */
 
     public function _getName() {
         if ( !isset ($this->_table)) {
@@ -179,6 +176,11 @@ class Stick {
         return $this->_table;
     }
 
+    public function hasProperty($key) {
+        if ( array_key_exists($key, $this->_data))
+            return true;
 
+        return false;
+    }
 
 }

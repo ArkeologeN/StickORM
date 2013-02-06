@@ -20,6 +20,10 @@ class Database implements Transactional, DataSource, Fetcher, Modifiable {
         return $this->_db;
     }
 
+    public function getAbstract() {
+        return $this->_getDb();
+    }
+
     private function _getWhere($criteria) {
         $result = array();
 
