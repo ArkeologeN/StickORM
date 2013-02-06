@@ -18,24 +18,35 @@ class Stick {
 
     private $_dataSource;
 
-    private $_fetchAs = PDO::FETCH_OBJ;
+    private $_fetchAs = PDO::FETCH_ASSOC;
 
     protected static $_classDataSource = null;
 
     protected static $_name;
 
-    static function newStick($table_name = null) {
+    /*
+    static function newStick($table_name = null, $id = null) {
+
         if ( is_null($table_name))
             throw new Exception("Cannot create null stick.");
 
-        self::$_table = $table_name;
-        return new self;
-    }
 
-    public function __construct($data = array()) {
+        if ( !is_null($id)) {
+            return self::_auto_get($id);
+        }
+
+        return new Stick($table_name);
+    }
+    */
+
+    public function __construct($table_name,$data = array()) {
+        //$this->_table = $table_name;
+        self::$_table = $table_name;
+        //echo ' = ' . self::_getName() . ' = '. '<br />';
         $this->_data = $data;
         $this->_isNew = true;
         $this->_dataSource = static::getDataSource();
+        //echo "<pre>"; print_r($this); exit;
     }
 
     public function save() {
@@ -47,6 +58,14 @@ class Stick {
         }
     }
 
+    static  function _auto_get($id, $table_name = null) {
+        if (!is_null($table_name))
+            self::$_table = $table_name;
+
+        $record = static::getDataSource()->scanAndGet(static::_getName(), $id);
+        return $record;
+    }
+
     public function delete() {
 
     }
@@ -55,10 +74,22 @@ class Stick {
         $this->_isNew = $bool;
     }
 
+    private function _makeStick($data) {
+        if ( !empty ($data)) {
+            $stick = Stick::newStick(static::_getName());
+            foreach ($data as $column => $value) {
+                $stick->$column = $value;
+            }
+
+
+            return $stick;
+        }
+        return Stick::newStick(static::_getName());
+    }
+
     public function get($criteria = array(), $order = null, $limit = null, $offset = 0) {
         try {
             $result = static::getDataSource()->get(static::_getName(), $criteria, $order, $limit, $offset);
-
             $object = new stdClass();
             if ( !empty($result)) {
                 $object = Stick::newStick(static::_getName());
@@ -121,10 +152,6 @@ class Stick {
         return $this->_data[$column];
     }
 
-    public function setPk($column_name = null) {
-
-    }
-
     public function fetchAs($type = PDO::FETCH_OBJ) {
         $this->_fetchAs = $type;
         static::getDataSource()->setFetchMode($this->_fetchAs);
@@ -140,8 +167,8 @@ class Stick {
     }
 
     protected static function _getName() {
-        if ( !isset (static::$_table)) {
-            throw new Exception("Table name found in ".get_called_class());
+        if ( !isset (self::$_table)) {
+            throw new Exception("Table name not found in ".get_called_class());
         }
 
         return static::$_table;

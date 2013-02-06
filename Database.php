@@ -80,7 +80,7 @@ class Database implements Transactional, DataSource, Fetcher, Modifiable {
 
         $stmt = $this->_getDb()->query($select);
         $stmt->execute();
-        $result = $stmt->fetch(PDO::FETCH_OBJ);
+        $result = $stmt->fetch($this->_getDb()->getFetchMode());
         return $result;
     }
 
@@ -102,7 +102,7 @@ class Database implements Transactional, DataSource, Fetcher, Modifiable {
 
         $stmt = $this->_getDb()->query($select);
         $stmt->execute();
-        $result = $stmt->fetchAll(PDO::FETCH_OBJ);
+        $result = $stmt->fetchAll($this->_getDb()->getFetchMode());
         return $result;
     }
 
@@ -132,13 +132,14 @@ class Database implements Transactional, DataSource, Fetcher, Modifiable {
     public function getFetchMode()
     {
         // TODO: Implement getFetchMode() method.
-        return $this->getFetchMode();
+        return $this->_getDb()->getFetchMode();
     }
 
     public function add($object, array &$data)
     {
         // TODO: Implement add() method.
         $primaryKeyColumn = $this->_getPrimaryKeyColumn($object);
+        echo "<pre>"; print_r($object); exit;
         $this->_getDb()->insert($object, $data);
         $data[$primaryKeyColumn] = $this->_getDb()->lastInsertId();
     }
@@ -162,5 +163,10 @@ class Database implements Transactional, DataSource, Fetcher, Modifiable {
         $where = $this->_getWhere($criteria);
 
         $this->_getDb()->delete($object, $where);
+    }
+
+    public function scanAndGet($object,$id) {
+        $primaryKeyColumn = $this->_getPrimaryKeyColumn($object);
+        return static::get($object, array("{$primaryKeyColumn} = ?" => $id));
     }
 }
