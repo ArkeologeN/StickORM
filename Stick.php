@@ -160,7 +160,7 @@ class Stick {
     }
 
     public static function getDataSource() {
-        return static::$static_config;
+        return static::$static_config->datasource;
     }
 
     public static function setDataSource(DataSource $datasource) {
